@@ -9,9 +9,8 @@ namespace Chess_Challenge
         {
             ChessBoard myChessBoard = new ChessBoard();
             myChessBoard.printChessBoard();
-            Console.Read();
-        }
-        
 
+            Console.Read();         
+        }
     }
 }
