@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Chess_Challenge
 {
-    public class ChessBoard
+    public class ChessBoardUI
     {
         //refactor this
         private List<string> columnsReference = new List<string>(new string[] { "A", "B", "C", "D", "E", "F", "G", "H" });
