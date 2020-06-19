@@ -8,7 +8,6 @@ namespace Chess_Challenge
     {
         public int Id { get; set; }
         public string BoardReference { get; set; }
-
         public string BackgroundColor { get; set; }
 
         public BoxLocation() { }
