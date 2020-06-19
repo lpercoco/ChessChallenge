@@ -12,11 +12,12 @@ namespace Chess_Challenge
 
         static void Main(string[] args)
         {
-            //ChessBoardUI myChessBoard = new ChessBoardUI();
-            //myChessBoard.printChessBoard();
-
+            ChessBoardUI myChessBoard = new ChessBoardUI();
+            myChessBoard.printChessBoard();
 
             GenerateInitialRandomDistribution();
+
+            myChessBoard.PrintPieces(ChessPieces);
 
             Console.Read();
         }
@@ -26,21 +27,19 @@ namespace Chess_Challenge
             ChessPieces = GenerateChessPieces();
             Locations = LocationInitialization();
 
+            //refactorizar, se repite codigo
+
             //locate not Alfil pieces
             ChessPieces.Where(p => p.Name != "Alfil").ToList()
              .ForEach(i => {
-                 Random r = new Random();
-
                  do
                  {
-                     int rInt = r.Next(1, 64);
+                     BoxLocation randomLocation = GetRandomLocation();
 
-                     BoxLocation randomLocation = Locations[rInt];
+                     ChessPiece searchPiece = ChessPieces.Find( p => p.BoardLocation != null &&
+                                                                     p.BoardLocation.Id == randomLocation.Id);
 
-                     ChessPiece foundPiece = ChessPieces.Find(fp => fp.BoardLocation != null &&
-                                                                    fp.BoardLocation.Id == randomLocation.Id);
-
-                     if (foundPiece == null)
+                     if (searchPiece == null)
                      {
                          i.BoardLocation = randomLocation;
                      }
@@ -59,11 +58,35 @@ namespace Chess_Challenge
                 ForEach(i => {
                     if (colorFlag == 0)
                     {
-                    //set dark               
+                        do
+                        {
+                            BoxLocation randomLocation = GetRandomLocation("dark");
+
+                            ChessPiece searchPiece = ChessPieces.Find( p => p.BoardLocation != null &&
+                                                                            p.BoardLocation.Id == randomLocation.Id);
+
+                            if (searchPiece == null)
+                            {
+                                i.BoardLocation = randomLocation;
+                            }
+
+                        } while (i.BoardLocation == null);
                     }
                     else
                     {
-                    //set light
+                        do
+                        {
+                            BoxLocation randomLocation = GetRandomLocation("light");
+
+                            ChessPiece foundPiece = ChessPieces.Find(fp => fp.BoardLocation != null &&
+                                                                           fp.BoardLocation.Id == randomLocation.Id);
+
+                            if (foundPiece == null)
+                            {
+                                i.BoardLocation = randomLocation;
+                            }
+
+                        } while (i.BoardLocation == null);
                     }
                     colorFlag ^= 1;
                 });
@@ -82,6 +105,23 @@ namespace Chess_Challenge
                 }
             }
             Console.Read();
+        }
+
+        private static BoxLocation GetRandomLocation()
+        {
+            Random r = new Random();
+            int rInt = r.Next(1, 64);
+            return Locations[rInt];
+        }
+
+        private static BoxLocation GetRandomLocation(string color)
+        {
+            BoxLocation location;
+            do
+            {
+                location = GetRandomLocation();
+            } while (location.BackgroundColor != color);
+            return location;
         }
 
         private static List<BoxLocation> LocationInitialization()

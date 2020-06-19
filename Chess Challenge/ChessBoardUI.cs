@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 
 namespace Chess_Challenge
 {
@@ -87,6 +88,28 @@ namespace Chess_Challenge
                     }
                 }
             }
+        }
+
+        public void PrintPieces(List<ChessPiece> pieces)
+        {
+
+            //print jugador uno
+            Console.ForegroundColor = ConsoleColor.Red;
+            pieces.Where( piece => piece.Player == 1).ToList()
+                .ForEach( p => 
+                    {
+                        //refactor?
+                        int col = (int)Char.GetNumericValue(p.BoardLocation.Id.ToString()[1]);
+                        int row = (int)Char.GetNumericValue(p.BoardLocation.Id.ToString()[0]);
+
+                        //Console.SetCursorPosition(1,1);
+                        Console.Write(p.ShortName);
+                    });
+
+            //print jugador 2
+            Console.ForegroundColor = ConsoleColor.Blue;
+
+            Console.ResetColor();
         }
     }
 }
