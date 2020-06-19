@@ -90,26 +90,72 @@ namespace Chess_Challenge
             }
         }
 
+        public void PrintGameReferences()
+        {
+            Console.SetCursorPosition(80,1);
+            Console.WriteLine("***CHESS CHALLENGE***");
+
+            Console.SetCursorPosition(80, 3);
+            Console.WriteLine("JUGADORES");
+
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.SetCursorPosition(80, 5);
+            Console.WriteLine("JUGADOR : 1");
+
+            Console.ForegroundColor = ConsoleColor.Green; 
+            Console.SetCursorPosition(80, 6);
+            Console.WriteLine("JUGADOR : 2");
+
+            Console.ResetColor();
+
+            Console.SetCursorPosition(80, 8);
+            Console.WriteLine("REFERENCIAS");
+
+            Console.SetCursorPosition(80, 10);
+            Console.WriteLine("PEON = P");
+            Console.SetCursorPosition(80, 11);
+            Console.WriteLine("TORRE = T");
+            Console.SetCursorPosition(80, 12);
+            Console.WriteLine("CABALLO = C");
+            Console.SetCursorPosition(80, 13);
+            Console.WriteLine("ALFIL = A");
+            Console.SetCursorPosition(80, 14);
+            Console.WriteLine("REINA = Ra");
+            Console.SetCursorPosition(80, 15);
+            Console.WriteLine("REY = Ry");
+
+        }
+
+        //refactor
+        public void PrintPiece(ChessPiece p)
+        {
+ 
+            int col = (int)Char.GetNumericValue(p.BoardLocation.Id.ToString()[1]);
+            int row = (int)Char.GetNumericValue(p.BoardLocation.Id.ToString()[0]);
+
+            Console.SetCursorPosition((col * BOXSIZE) - 2, (9 - row) * (BOXSIZE / 2));
+            Console.Write(p.ShortName);
+        }
         public void PrintPieces(List<ChessPiece> pieces)
         {
-
-            //print jugador uno
+            //print player 1
             Console.ForegroundColor = ConsoleColor.Red;
             pieces.Where( piece => piece.Player == 1).ToList()
                 .ForEach( p => 
                     {
-                        //refactor?
-                        int col = (int)Char.GetNumericValue(p.BoardLocation.Id.ToString()[1]);
-                        int row = (int)Char.GetNumericValue(p.BoardLocation.Id.ToString()[0]);
-
-                        //Console.SetCursorPosition(1,1);
-                        Console.Write(p.ShortName);
+                        PrintPiece(p);
                     });
 
-            //print jugador 2
-            Console.ForegroundColor = ConsoleColor.Blue;
+            //print player 2
+            Console.ForegroundColor = ConsoleColor.Green;
+            pieces.Where(piece => piece.Player == 2).ToList()
+                .ForEach(p =>
+                    {
+                        PrintPiece(p);
+                    });
 
             Console.ResetColor();
+            Console.ReadLine();
         }
     }
 }

@@ -12,12 +12,13 @@ namespace Chess_Challenge
 
         static void Main(string[] args)
         {
-            ChessBoardUI myChessBoard = new ChessBoardUI();
-            myChessBoard.printChessBoard();
+            ChessBoardUI myChessBoardUI = new ChessBoardUI();
+            myChessBoardUI.printChessBoard();
+            myChessBoardUI.PrintGameReferences();
 
             GenerateInitialRandomDistribution();
 
-            myChessBoard.PrintPieces(ChessPieces);
+            myChessBoardUI.PrintPieces(ChessPieces);
 
             Console.Read();
         }
@@ -52,7 +53,6 @@ namespace Chess_Challenge
             {
                 //0 = dark
                 //1 = light
-                Console.WriteLine("player: " + player);
                 int colorFlag = 0;
                 ChessPieces.Where(p => p.Name == "Alfil" && p.Player == player).ToList().
                 ForEach(i => {
@@ -93,6 +93,7 @@ namespace Chess_Challenge
             }
         
             //just for testing
+            /*
             for (int i = 0; i < ChessPieces.Count; i++)
             {
                 if (ChessPieces[i].BoardLocation != null)
@@ -105,6 +106,7 @@ namespace Chess_Challenge
                 }
             }
             Console.Read();
+            */
         }
 
         private static BoxLocation GetRandomLocation()
