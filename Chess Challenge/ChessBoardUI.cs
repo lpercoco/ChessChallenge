@@ -10,12 +10,14 @@ namespace Chess_Challenge
         private List<string> ColumnsReference;
         private int BoxSizeX;
         private int BoxSizeY;
+        private int RefenceXPosition;
 
         public ChessBoardUI()
         {
             ColumnsReference = new List<string>(new string[] { "A", "B", "C", "D", "E", "F", "G", "H" });
             BoxSizeX = 8;
             BoxSizeY = 4;
+            RefenceXPosition = 75;
         }
 
         public void PrintChessBoard()
@@ -34,6 +36,49 @@ namespace Chess_Challenge
                 Console.SetCursorPosition(x + (BoxSizeX * i) + (BoxSizeX / 2), y);
                 Console.Write(ColumnsReference[i]);
             }
+        }
+
+        public void PrintMessage(string message)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.SetCursorPosition(RefenceXPosition, 21);
+            Console.Write(message);
+            Console.ResetColor();
+        }
+
+        public string SelectBox(string message)
+        {
+            string input;
+            do
+            {
+                Console.SetCursorPosition(RefenceXPosition, 20);
+                Console.WriteLine(message);
+
+                Console.SetCursorPosition(RefenceXPosition, 22);
+                Console.Write("                                ");
+
+                Console.SetCursorPosition(RefenceXPosition, 22);
+                Console.Write("Ingrese casillero:");
+
+                input = Console.ReadLine();
+
+                if (String.IsNullOrEmpty(input))
+                {
+                    PrintMessage("Ingreso vacio, intente nuevamente");
+                }
+                else
+                {
+                    CleanMessage();
+                };
+
+            } while (String.IsNullOrEmpty(input));
+
+            return input.ToUpper();
+        }
+
+        private void CleanMessage()
+        {
+            PrintMessage("                                          ");
         }
 
         public void PrintNumbersReference(int x, int y)
@@ -112,11 +157,11 @@ namespace Chess_Challenge
                     {
                         if(p.Player == 1)
                         {
-                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.ForegroundColor = ConsoleColor.Blue;
                         }
                         else
                         {
-                            Console.ForegroundColor = ConsoleColor.Green;
+                            Console.ForegroundColor = ConsoleColor.Magenta;
                         }
                         PrintPiece(p);
                     });
@@ -127,37 +172,43 @@ namespace Chess_Challenge
 
         public void PrintGameReferences()
         {
-            Console.SetCursorPosition(80, 1);
+            Console.SetCursorPosition(RefenceXPosition, 1);
             Console.WriteLine("***CHESS CHALLENGE***");
 
-            Console.SetCursorPosition(80, 3);
+            Console.SetCursorPosition(RefenceXPosition, 3);
             Console.WriteLine("JUGADORES");
 
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.SetCursorPosition(80, 5);
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.SetCursorPosition(RefenceXPosition, 5);
             Console.WriteLine("JUGADOR : 1");
 
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.SetCursorPosition(80, 6);
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.SetCursorPosition(RefenceXPosition, 6);
             Console.WriteLine("JUGADOR : 2");
 
             Console.ResetColor();
 
-            Console.SetCursorPosition(80, 8);
+            Console.SetCursorPosition(RefenceXPosition, 8);
             Console.WriteLine("REFERENCIAS");
 
-            Console.SetCursorPosition(80, 10);
+            Console.SetCursorPosition(RefenceXPosition, 10);
             Console.WriteLine("PEON = P");
-            Console.SetCursorPosition(80, 11);
+            Console.SetCursorPosition(RefenceXPosition, 11);
             Console.WriteLine("TORRE = T");
-            Console.SetCursorPosition(80, 12);
+            Console.SetCursorPosition(RefenceXPosition, 12);
             Console.WriteLine("CABALLO = C");
-            Console.SetCursorPosition(80, 13);
+            Console.SetCursorPosition(RefenceXPosition, 13);
             Console.WriteLine("ALFIL = A");
-            Console.SetCursorPosition(80, 14);
+            Console.SetCursorPosition(RefenceXPosition, 14);
             Console.WriteLine("REINA = Ra");
-            Console.SetCursorPosition(80, 15);
+            Console.SetCursorPosition(RefenceXPosition, 15);
             Console.WriteLine("REY = Ry");
+
+            Console.SetCursorPosition(RefenceXPosition, 17);
+            Console.WriteLine("INGRESO DE CASILLEROS:");
+            Console.SetCursorPosition(RefenceXPosition, 18);
+            Console.WriteLine("FILACOLUMNA -> EJEMPLO: 1A");
+
         }
     }
 }

@@ -14,6 +14,8 @@ namespace Chess_Challenge
 
             Controller.GenerateInitialRandomDistribution();
 
+            Controller.PlayGame();
+
             Console.Read();
         }    
     }
