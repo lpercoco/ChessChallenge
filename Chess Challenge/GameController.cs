@@ -170,7 +170,7 @@ namespace Chess_Challenge
 
                             flag = "upward";
                         }
-                        else if (colDestinyLocation > col && rowDestinyLocation < row)
+                        else if (colDestinyLocation < col && rowDestinyLocation < row)
                         {
                             //upward (bottom)
                             startIndexRow = rowDestinyLocation;
@@ -182,35 +182,29 @@ namespace Chess_Challenge
                         } else if(rowDestinyLocation > row && colDestinyLocation < col)
                         {
                             //downward (top)
+                            startIndexRow = row + 1;
+                            endIndexRow =  rowDestinyLocation;
+
+                            startIndexCol = col - 1;
+
+                            flag = "downward";
+                        } else 
+                        {
+                            //downward (bottom)
                             startIndexRow = rowDestinyLocation;
                             endIndexRow = row - 1;
 
                             startIndexCol = colDestinyLocation;
 
                             flag = "downward";
-                        } else
-                        {
-                            //downward (bottom)
-                            startIndexRow = row + 1;
-                            endIndexRow = rowDestinyLocation;
-
-                            startIndexCol = col + 1;
-
-                            flag = "downward";
                         };
 
+
                         //get possible locations
-                        int j = startIndexCol;
+                            int j = startIndexCol;
                         for (int i = startIndexRow; i <= endIndexRow; i++)
                         {
-                            if(flag == "upward")
-                            {
-                                //calculatedLocation = int.Parse(.ToString() + .ToString());
-                            }
-                            else
-                            {
-                                //calculatedLocation = int.Parse(.ToString() + .ToString());
-                            }
+                            calculatedLocation = int.Parse(i.ToString() + j.ToString());
                             
                             BoxLocation location = Locations.Where(lo => lo.Id == calculatedLocation).FirstOrDefault();
 
@@ -219,7 +213,14 @@ namespace Chess_Challenge
                                 posibleLocations.Add(location);
                             };
 
-                            colIndex = colIndex + 1;
+                            if(flag == "upward")
+                            {
+                                j = j + 1;
+                            }
+                            else
+                            {
+                                j = j - 1;
+                            };
                         }
 
                         if(posibleLocations.Any(l => l.Id == destinationBox.Id))
@@ -234,9 +235,10 @@ namespace Chess_Challenge
                                         pieceLocation.Available == true &&
                                         pieceLocation.Player == piece.Player)
                                 {
-                                    //if there is an available piece of the same player in the location,
-                                    //it is a invalid move
-                                    break;
+                                    //if there is an available piece of the same player in the destiny location,
+                                    //it is an invalid move
+                                    myChessBoardUI.PrintMessage("Movimiento invalido");
+                                    return false;
                                 }
 
                                 if (posibleLocations[i].Id != destinationBox.Id &&
@@ -244,38 +246,25 @@ namespace Chess_Challenge
                                     pieceLocation.Available == true)
                                 {
                                     // if there is a available piece in the way to the destiny location,
-                                    //it is a invalid move
-                                    break;
+                                    //it is an invalid move
+                                    myChessBoardUI.PrintMessage("Movimiento invalido");
+                                    return false;
                                 }
 
                                 //if it did not break at the last loop,
                                 //it is a valid move
-                                if ( (i + 1) == posibleLocations.Count) return true;
-                            }
-                        }
-
-                        //////////////////////
-
-                        //calculating locations on the downward diagonal
-                        j = 8;
-                        for (int i = startCol; i < 9; i++)
-                        {
-                            calculatedLocation = int.Parse(j.ToString() + i.ToString()); ;
-
-                            //discard the  piece's location
-                            if (calculatedLocation != (piece.BoardLocation.Id))
-                            {
-                                BoxLocation location = Locations.Where(lo => lo.Id == calculatedLocation).FirstOrDefault();
-
-                                if (location != null)
+                                if ((i + 1) == posibleLocations.Count)
                                 {
-                                    posibleLocations.Add(location);
+                                    return true;
                                 };
-
-                            };
-                            j = j - 1;
-                        }
-                        return false;
+                            }
+                        } else
+                        {
+                            //the selected location is not in the possible locations
+                            myChessBoardUI.PrintMessage("Movimiento invalido");
+                            return false;
+                        };
+                        return true;
                     }
                 case "Ra":
                     {
