@@ -26,8 +26,6 @@ namespace Chess_Challenge
             myChessBoardUI.PrintGameReferences();
         }
 
-        //valido que la pieza se pueda mover a la ubicacion destino
-        //como si el tablero estuviera vacio
         public Boolean MovementValidation(ChessPiece piece, BoxLocation destinationBox)
         {
             List<BoxLocation> posibleLocations = new List<BoxLocation>();
@@ -111,7 +109,6 @@ namespace Chess_Challenge
 
                                 if (calculatedLocation == destinationBox.Id &&
                                     pieceLocation != null &&
-                                    pieceLocation.Available == true &&
                                     pieceLocation.Player == piece.Player)
                                 {
                                     //if there is an available piece of the same player in the location,
@@ -121,8 +118,7 @@ namespace Chess_Challenge
                                 }
 
                                 if (calculatedLocation != destinationBox.Id &&
-                                    pieceLocation != null &&
-                                    pieceLocation.Available == true)
+                                    pieceLocation != null )
                                 {
                                     // if there is a available piece in the way to the destiny location,
                                     //it is a invalid movement
@@ -232,7 +228,6 @@ namespace Chess_Challenge
                                 //
                                 if (posibleLocations[i].Id == destinationBox.Id &&
                                         pieceLocation != null &&
-                                        pieceLocation.Available == true &&
                                         pieceLocation.Player == piece.Player)
                                 {
                                     //if there is an available piece of the same player in the destiny location,
@@ -242,8 +237,7 @@ namespace Chess_Challenge
                                 }
 
                                 if (posibleLocations[i].Id != destinationBox.Id &&
-                                    pieceLocation != null &&
-                                    pieceLocation.Available == true)
+                                    pieceLocation != null)
                                 {
                                     // if there is a available piece in the way to the destiny location,
                                     //it is an invalid move
@@ -304,7 +298,7 @@ namespace Chess_Challenge
                         {
                             ChessPiece pieceLocation = ChessPieces.Where(p => p.BoardLocation == posibleLocations[i]).FirstOrDefault();
 
-                            if (pieceLocation != null && pieceLocation.Player == piece.Player && pieceLocation.Available == true)
+                            if (pieceLocation != null && pieceLocation.Player == piece.Player)
                             {
                                 posibleLocations.RemoveAt(i);
                             };
@@ -334,66 +328,91 @@ namespace Chess_Challenge
 
         public void PlayGame()
         {
-            bool inputFlag = false;
+            bool inputFlag = true;
             ChessPiece selectedPiece = null;
-
-            //seleccion pieza
+            BoxLocation selectedDestiny = null;
+     
             do
             {
+                //piece selection
                 string selectedBox = myChessBoardUI.SelectBox("Ingrese ubicación de la pieza a mover");
-                    
+
                 inputFlag = Locations.Any(l => l.BoardReference.Equals(selectedBox));
-                
-                if(inputFlag == false)
+
+                if (inputFlag == false)
                 {
                     myChessBoardUI.PrintMessage("Ingreso NO valido - Revise las Referencias");
                 }
                 else
                 {
-                    selectedPiece = ChessPieces.Find(p => p.BoardLocation.BoardReference.Equals(selectedBox) && p.Available);
+                    selectedPiece = ChessPieces.Find(p => p.BoardLocation.BoardReference.Equals(selectedBox));
                     if (selectedPiece == null)
                     {
+                        inputFlag = false;
                         myChessBoardUI.PrintMessage("No hay una pieza en el casillero ingresado");
                     }
 
-                }
-            } while (inputFlag == false || selectedPiece == null);
+                    //destiny selection and movement validation
+                    if(inputFlag != false)
+                    {
+                        selectedBox = myChessBoardUI.SelectBox("Ingrese el destino de la pieza");
 
-            //seleccion destino
-            do
-            {
-                string selectedBox = myChessBoardUI.SelectBox("Ingrese el destino de la pieza");
+                        selectedDestiny = Locations.Where(l => l.BoardReference.Equals(selectedBox)).FirstOrDefault();
 
-                BoxLocation selectedDestinyBox = Locations.Where(l => l.BoardReference.Equals(selectedBox)).FirstOrDefault();
+                        if (selectedDestiny == null)
+                        {
+                            inputFlag = false;
+                            myChessBoardUI.PrintMessage("Ingreso NO valido - Revise las Referencias");
+                        }
+                        else if (selectedDestiny.Id == selectedPiece.BoardLocation.Id)
+                        {
+                            inputFlag = false;
+                            myChessBoardUI.PrintMessage("Ingreso NO valido - Ingreso repetido");
+                        }
+                        else
+                        {
+                            bool movementValidation = MovementValidation(selectedPiece, selectedDestiny);
 
-                if (selectedDestinyBox == null )
-                {
-                    myChessBoardUI.PrintMessage("Ingreso NO valido - Revise las Referencias");
-                } else if(selectedDestinyBox.Id == selectedPiece.BoardLocation.Id)
-                {
-                    myChessBoardUI.PrintMessage("Ingreso NO valido - Ingreso repetido");
-                }
-                else
-                {
-                    ChessPiece piece = ChessPieces.Find(p => p.BoardLocation.Id == selectedDestinyBox.Id);
+                            myChessBoardUI.PrintMessage("se puede mover: " + movementValidation);
 
-                    //validar movimiento
-                    bool b = MovementValidation(selectedPiece, selectedDestinyBox);
+                            if (!MovementValidation(selectedPiece, selectedDestiny))
+                            {
+                                inputFlag = false;
+                            }
 
-                    myChessBoardUI.PrintMessage("se puede mover: " + b);
+                        };    
+                    }
+                } 
+            } while (inputFlag == false);
 
-                    //si se puede mover,
-                    // actualzar posicion de la pieza movida
-                    //si se come una pieza, actualizar el estado de esa pieza
+            //si se puede mover,
+            // actualzar posicion de la pieza movida
+            //si se come una pieza, actualizar el estado de esa pieza
 
-                    //actualizar pantalla
+            UpdateChessPieceLocation(selectedPiece, selectedDestiny);
 
-                }
-
-            } while (true);
+            myChessBoardUI.UpdateChessBoard(ChessPieces);
+            //limpiar mensajes
+            
+            Console.ReadLine();
         }
 
+        private void UpdateChessPieceLocation(ChessPiece selectedPiece, BoxLocation selectedDestiny)
+        {
+            // If there is a piece in the destiny location,
+            // I remove/delete the piece
+            ChessPiece pieceToRemove = ChessPieces.Where(p => p.BoardLocation == selectedDestiny).FirstOrDefault();
 
+            if (pieceToRemove != null)
+            {
+                ChessPieces.Remove(pieceToRemove);
+            };
+
+            //Update piece's location
+            int i = ChessPieces.FindIndex(p => p.Id == selectedPiece.Id);
+            ChessPieces[i].BoardLocation = selectedDestiny;
+            
+        }
 
         public void GenerateInitialRandomDistribution()
         {
@@ -489,32 +508,32 @@ namespace Chess_Challenge
             {
                 for (int i = 0; i < 8; i++)
                 {
-                    ChessPiece peon = new ChessPiece("Peon", "P", player);
+                    ChessPiece peon = new ChessPiece(chessPieces.Count + 1, "Peon", "P", player);
                     chessPieces.Add(peon);
                 }
 
                 for (int i = 0; i < 2; i++)
                 {
-                    ChessPiece torre = new ChessPiece("Torre", "T", player);
+                    ChessPiece torre = new ChessPiece(chessPieces.Count + 1,"Torre", "T", player);
                     chessPieces.Add(torre);
                 }
 
                 for (int i = 0; i < 2; i++)
                 {
-                    ChessPiece alfil = new ChessPiece("Alfil", "A", player);
+                    ChessPiece alfil = new ChessPiece(chessPieces.Count + 1,"Alfil", "A", player);
                     chessPieces.Add(alfil);
                 }
 
                 for (int i = 0; i < 2; i++)
                 {
-                    ChessPiece caballo = new ChessPiece("Caballo", "C", player);
+                    ChessPiece caballo = new ChessPiece(chessPieces.Count + 1,"Caballo", "C", player);
                     chessPieces.Add(caballo);
                 }
 
-                ChessPiece rey = new ChessPiece("Rey", "Ry", player);
+                ChessPiece rey = new ChessPiece(chessPieces.Count + 1,"Rey", "Ry", player);
                 chessPieces.Add(rey);
 
-                ChessPiece reina = new ChessPiece("Reina", "Ra", player);
+                ChessPiece reina = new ChessPiece(chessPieces.Count + 1,"Reina", "Ra", player);
                 chessPieces.Add(reina);
             }
             return chessPieces;

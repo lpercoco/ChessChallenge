@@ -152,8 +152,7 @@ namespace Chess_Challenge
         }
         public void PrintPieces(List<ChessPiece> pieces)
         {
-            pieces.Where( piece => piece.Available == true ).ToList()
-                .ForEach( p => 
+            pieces.ForEach( p => 
                     {
                         if(p.Player == 1)
                         {
@@ -209,6 +208,39 @@ namespace Chess_Challenge
             Console.SetCursorPosition(RefenceXPosition, 18);
             Console.WriteLine("FILACOLUMNA -> EJEMPLO: 1A");
 
+        }
+
+        public void UpdateChessBoard(List<ChessPiece> chessPieces)
+        {
+            CleanChessBoardPieces();
+
+            PrintPieces(chessPieces);
+        }
+
+        private void CleanChessBoardPieces()
+        {
+            BoxLocation location = new BoxLocation();
+
+            ChessPiece blackBox = new ChessPiece("  ");
+            ChessPiece whiteBox = new ChessPiece("██");
+
+            for (int row = 8; row > 0; row--)
+            {
+                for (int col = 1; col < 9; col++)
+                {
+                    location.Id = (int.Parse(row.ToString() + col.ToString()));
+                    if (((row % 2 == 0) && (col % 2 != 0)) || ((row % 2 != 0) && (col % 2 == 0)))
+                    {
+                        whiteBox.BoardLocation = location;
+                        PrintPiece(whiteBox);
+                        
+                    } else
+                    {
+                        blackBox.BoardLocation = location;
+                        PrintPiece(blackBox);
+                    };
+                }
+            }
         }
     }
 }
