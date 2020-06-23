@@ -83,87 +83,14 @@ namespace Chess_Challenge
                     }
                 case "T":
                     {
-                        int startIndex;
-                        int endIndex;
-                        string destinyAxis;
-
-                        if(colDestinyLocation == col || rowDestinyLocation == row )
+                        bool rook = ValidateRookMove(colDestinyLocation, rowDestinyLocation, col, row, piece, destinationBox);                    
+                        
+                        if(!rook)
                         {
-                            //Considering the axis and the destiny locacion from the piece
-                            //I calculate the limits of the indexs
-                            if(rowDestinyLocation == row)
-                            {
-                                destinyAxis = "row";
-
-                                if (colDestinyLocation > col)
-                                {
-                                    startIndex = col + 1;
-                                    endIndex = colDestinyLocation;
-                                }
-                                else
-                                {
-                                    startIndex = colDestinyLocation;
-                                    endIndex = col - 1;
-                                };
-                            }
-                            else
-                            {
-                                destinyAxis = "col";
-
-                                if (rowDestinyLocation > row)
-                                {
-                                    startIndex = row + 1;
-                                    endIndex = rowDestinyLocation;
-                                }
-                                else
-                                {
-                                    startIndex = rowDestinyLocation;
-                                    endIndex = row - 1;
-                                };
-                            };
-
-                            //I go through the locations between the destination and the piece to move
-                            for (int indexAux = startIndex; indexAux <= endIndex; indexAux++)
-                            {
-                                //I calculate the location based on the destiny axis
-                                if(destinyAxis == "row")
-                                {
-                                    calculatedLocation = int.Parse(row.ToString() + indexAux.ToString());
-                                }
-                                else
-                                {
-                                    calculatedLocation = int.Parse(indexAux.ToString() + col.ToString());
-                                };
-                                ChessPiece pieceLocation = ChessPieces.Where(p => p.BoardLocation.Id == calculatedLocation).FirstOrDefault();
-
-                                if (calculatedLocation == destinationBox.Id &&
-                                    pieceLocation != null &&
-                                    pieceLocation.Player == piece.Player)
-                                {
-                                    //if there is an available piece of the same player in the location,
-                                    //it is a invalid movement
-                                    myChessBoardUI.PrintMessage("Movimiento invalido");
-                                    return false;
-                                }
-
-                                if (calculatedLocation != destinationBox.Id &&
-                                    pieceLocation != null )
-                                {
-                                    // if there is a available piece in the way to the destiny location,
-                                    //it is a invalid movement
-                                    myChessBoardUI.PrintMessage("Movimiento invalido");
-                                    return false;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            //the destiny location is not in any of the axis of the piece location,
-                            //it is a invalid movement
                             myChessBoardUI.PrintMessage("Movimiento invalido");
-                            return false;
-                        };
-                        return true;
+                        }
+
+                        return rook;
                     }
                 case "C":
                     {
@@ -241,122 +168,38 @@ namespace Chess_Challenge
                     }
                 case "A":
                     {
-                        int startIndexRow;
-                        int startIndexCol;
-                        int endIndexRow;
+                        bool bishop = ValidateBishopMove(colDestinyLocation, rowDestinyLocation, col, row, piece, destinationBox);
 
-                        string flag;
-
-                        //calculation of the indexs 
-                        if (colDestinyLocation > col && rowDestinyLocation > row)
+                        if (!bishop)
                         {
-                            //upward (top)
-                            startIndexRow = row + 1;
-                            endIndexRow = rowDestinyLocation;
-
-                            startIndexCol = col + 1;
-
-                            flag = "upward";
-                        }
-                        else if (colDestinyLocation < col && rowDestinyLocation < row)
-                        {
-                            //upward (bottom)
-                            startIndexRow = rowDestinyLocation;
-                            endIndexRow = row - 1;
-
-                            startIndexCol = colDestinyLocation;
-
-                            flag = "upward";                  
-                        } else if(rowDestinyLocation > row && colDestinyLocation < col)
-                        {
-                            //downward (top)
-                            startIndexRow = row + 1;
-                            endIndexRow =  rowDestinyLocation;
-
-                            startIndexCol = col - 1;
-
-                            flag = "downward";
-                        } else 
-                        {
-                            //downward (bottom)
-                            startIndexRow = rowDestinyLocation;
-                            endIndexRow = row - 1;
-
-                            startIndexCol = colDestinyLocation;
-
-                            flag = "downward";
-                        };
-
-
-                        //get possible locations
-                            int j = startIndexCol;
-                        for (int i = startIndexRow; i <= endIndexRow; i++)
-                        {
-                            calculatedLocation = int.Parse(i.ToString() + j.ToString());
-                            
-                            posibleLocations = AddPosibleLocation(i, j, posibleLocations);
-
-                            if (flag == "upward")
-                            {
-                                j = j + 1;
-                            }
-                            else
-                            {
-                                j = j - 1;
-                            };
-                        }
-
-                        if(posibleLocations.Any(l => l.Id == destinationBox.Id))
-                        {
-                            for (int i = 0 ; i < posibleLocations.Count; i++)
-                            {
-                                ChessPiece pieceLocation = ChessPieces.Where(p => p.BoardLocation.Id == posibleLocations[i].Id).FirstOrDefault();
-
-                                //
-                                if (posibleLocations[i].Id == destinationBox.Id &&
-                                        pieceLocation != null &&
-                                        pieceLocation.Player == piece.Player)
-                                {
-                                    //if there is an available piece of the same player in the destiny location,
-                                    //it is an invalid move
-                                    myChessBoardUI.PrintMessage("Movimiento invalido");
-                                    return false;
-                                }
-
-                                if (posibleLocations[i].Id != destinationBox.Id &&
-                                    pieceLocation != null)
-                                {
-                                    // if there is a available piece in the way to the destiny location,
-                                    //it is an invalid move
-                                    myChessBoardUI.PrintMessage("Movimiento invalido");
-                                    return false;
-                                }
-
-                                //if it did not break at the last loop,
-                                //it is a valid move
-                                if ((i + 1) == posibleLocations.Count)
-                                {
-                                    return true;
-                                };
-                            }
-                        } else
-                        {
-                            //the selected location is not in the possible locations
                             myChessBoardUI.PrintMessage("Movimiento invalido");
-                            return false;
-                        };
-                        return true;
+                        }
+
+                        return bishop;
                     }
                 case "Ra":
                     {
-                        /*
-                           La reina puede moverse en diagonal, hacia atrás col adelante, col hacia los costados,
-                           tantas piezas como quieran. (a menos que sea obstaculizada)
-                        */
-                        myChessBoardUI.PrintMessage("Movimiento no sorportado por el momento");
-                        return false;
+                         bool rook = ValidateRookMove(colDestinyLocation, rowDestinyLocation, col, row, piece, destinationBox);
+
+                        if(rook)
+                        {
+                            return true;
+                        }else
+                        {
+                            bool bishop = ValidateBishopMove(colDestinyLocation, rowDestinyLocation, col, row, piece, destinationBox);
+                            
+                            if(bishop)
+                            {
+                                return true;
+                            }
+                            else
+                            {
+                                myChessBoardUI.PrintMessage("Movimiento invalido");
+                                return false;
+                            }
+                        }
+
                     }
-                    break;
                 case "Ry":
                     {
                         int yAux;
@@ -404,9 +247,204 @@ namespace Chess_Challenge
                         };
                     }
                 default:
-                    Console.WriteLine("Default case");
                     break;
             }
+            return true;
+        }
+
+        private bool ValidateBishopMove(int colDestinyLocation, int rowDestinyLocation, int col, int row, ChessPiece piece, BoxLocation destinationBox)
+        {
+            int startIndexRow;
+            int startIndexCol;
+            int endIndexRow;
+
+            int calculatedLocation;
+            List<BoxLocation> posibleLocations = new List<BoxLocation>();
+
+            string flag;
+
+            //calculation of the indexs 
+            if (colDestinyLocation > col && rowDestinyLocation > row)
+            {
+                //upward (top)
+                startIndexRow = row + 1;
+                endIndexRow = rowDestinyLocation;
+
+                startIndexCol = col + 1;
+
+                flag = "upward";
+            }
+            else if (colDestinyLocation < col && rowDestinyLocation < row)
+            {
+                //upward (bottom)
+                startIndexRow = rowDestinyLocation;
+                endIndexRow = row - 1;
+
+                startIndexCol = colDestinyLocation;
+
+                flag = "upward";
+            }
+            else if (rowDestinyLocation > row && colDestinyLocation < col)
+            {
+                //downward (top)
+                startIndexRow = row + 1;
+                endIndexRow = rowDestinyLocation;
+
+                startIndexCol = col - 1;
+
+                flag = "downward";
+            }
+            else
+            {
+                //downward (bottom)
+                startIndexRow = rowDestinyLocation;
+                endIndexRow = row - 1;
+
+                startIndexCol = colDestinyLocation;
+
+                flag = "downward";
+            };
+
+
+            //get possible locations
+            int j = startIndexCol;
+            for (int i = startIndexRow; i <= endIndexRow; i++)
+            {
+                calculatedLocation = int.Parse(i.ToString() + j.ToString());
+
+                posibleLocations = AddPosibleLocation(i, j, posibleLocations);
+
+                if (flag == "upward")
+                {
+                    j = j + 1;
+                }
+                else
+                {
+                    j = j - 1;
+                };
+            }
+
+            if (posibleLocations.Any(l => l.Id == destinationBox.Id))
+            {
+                for (int i = 0; i < posibleLocations.Count; i++)
+                {
+                    ChessPiece pieceLocation = ChessPieces.Where(p => p.BoardLocation.Id == posibleLocations[i].Id).FirstOrDefault();
+
+                    //
+                    if (posibleLocations[i].Id == destinationBox.Id &&
+                            pieceLocation != null &&
+                            pieceLocation.Player == piece.Player)
+                    {
+                        //if there is an available piece of the same player in the destiny location,
+                        //it is an invalid move
+                        return false;
+                    }
+
+                    if (posibleLocations[i].Id != destinationBox.Id &&
+                        pieceLocation != null)
+                    {
+                        // if there is a available piece in the way to the destiny location,
+                        //it is an invalid move
+                        return false;
+                    }
+
+                    //if it did not break at the last loop,
+                    //it is a valid move
+                    if ((i + 1) == posibleLocations.Count)
+                    {
+                        return true;
+                    };
+                }
+            }
+            else
+            {
+                //the selected location is not in the possible locations
+                return false;
+            };
+            return true;
+        }
+
+        private bool ValidateRookMove(int colDestinyLocation, int rowDestinyLocation, int col, int row, ChessPiece piece, BoxLocation destinationBox)
+        {
+            int startIndex;
+            int endIndex;
+            string destinyAxis;
+            int calculatedLocation;
+
+            if (colDestinyLocation == col || rowDestinyLocation == row)
+            {
+                //Considering the axis and the destiny locacion from the piece
+                //I calculate the limits of the indexs
+                if (rowDestinyLocation == row)
+                {
+                    destinyAxis = "row";
+
+                    if (colDestinyLocation > col)
+                    {
+                        startIndex = col + 1;
+                        endIndex = colDestinyLocation;
+                    }
+                    else
+                    {
+                        startIndex = colDestinyLocation;
+                        endIndex = col - 1;
+                    };
+                }
+                else
+                {
+                    destinyAxis = "col";
+
+                    if (rowDestinyLocation > row)
+                    {
+                        startIndex = row + 1;
+                        endIndex = rowDestinyLocation;
+                    }
+                    else
+                    {
+                        startIndex = rowDestinyLocation;
+                        endIndex = row - 1;
+                    };
+                };
+
+                //I go through the locations between the destination and the piece to move
+                for (int indexAux = startIndex; indexAux <= endIndex; indexAux++)
+                {
+                    //I calculate the location based on the destiny axis
+                    if (destinyAxis == "row")
+                    {
+                        calculatedLocation = int.Parse(row.ToString() + indexAux.ToString());
+                    }
+                    else
+                    {
+                        calculatedLocation = int.Parse(indexAux.ToString() + col.ToString());
+                    };
+                    ChessPiece pieceLocation = ChessPieces.Where(p => p.BoardLocation.Id == calculatedLocation).FirstOrDefault();
+
+                    if (calculatedLocation == destinationBox.Id &&
+                        pieceLocation != null &&
+                        pieceLocation.Player == piece.Player)
+                    {
+                        //if there is an available piece of the same player in the location,
+                        //it is a invalid movement
+                        return false;
+                    }
+
+                    if (calculatedLocation != destinationBox.Id &&
+                        pieceLocation != null)
+                    {
+                        // if there is a available piece in the way to the destiny location,
+                        //it is a invalid movement
+                        return false;
+                    }
+                }
+            }
+            else
+            {
+                //the destiny location is not in any of the axis of the piece location,
+                //it is a invalid movement
+                return false;
+            };
+            //refactor this
             return true;
         }
 
