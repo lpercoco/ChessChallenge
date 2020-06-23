@@ -166,7 +166,6 @@ namespace Chess_Challenge
                     });
 
             Console.ResetColor();
-            Console.ReadLine();
         }
 
         public void PrintGameReferences()
@@ -212,6 +211,7 @@ namespace Chess_Challenge
 
         public void UpdateChessBoard(List<ChessPiece> chessPieces)
         {
+            //refactorizar para solamente limpiar y actualizar las ubicaciones involucradas
             CleanChessBoardPieces();
 
             PrintPieces(chessPieces);
@@ -241,6 +241,18 @@ namespace Chess_Challenge
                     };
                 }
             }
+        }
+
+        public void PrintGameOverMessage()
+        {
+            for (int i = 19; i < 23; i++)
+            {
+                Console.SetCursorPosition(RefenceXPosition, i);
+                CleanMessage();
+            }
+
+            Console.SetCursorPosition(RefenceXPosition, 19);
+            Console.WriteLine("GAME OVER!!!");
         }
     }
 }
