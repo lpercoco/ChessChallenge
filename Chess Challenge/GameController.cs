@@ -45,13 +45,42 @@ namespace Chess_Challenge
                 case "P":
                     {
                         //Los peones solo pueden avanzar hacia adelante.
-                        //(para las blancas, de fila 1 hacia fila 8
+                        //(para las blancas, de fila 1 hacia fila 8 (para arriba)
                         //col para las negras de fila 8 hacia fila 1, a menos que tengan otra pieza enfrente bloqueando
                         //el camino)
-                        myChessBoardUI.PrintMessage("Movimiento no sorportado por el momento");
-                        return false;
+
+                        int rowIndex;
+
+                        //white -> Player == 1
+                        //black -> Player == 2
+
+                        if(piece.Player == 1)
+                        {
+                            //player WHITE
+                            rowIndex = row + 1;
+                        }
+                        else
+                        {
+                            //player BLACK
+                            rowIndex = row - 1;        
+                        }
+
+                        posibleLocations = AddPosibleLocation(rowIndex, col, posibleLocations);
+                        ChessPiece destinyPiece = ChessPieces.Where(p => p.BoardLocation.Id == destinationBox.Id).FirstOrDefault();
+
+                        if ((posibleLocations.Count == 0) || // location outside of the board 
+                            (posibleLocations.Count != 0 && posibleLocations.First().Id != destinationBox.Id) || // destiny not in possible location
+                            (posibleLocations.Count != 0 && posibleLocations.First().Id == destinationBox.Id &&
+                             destinyPiece != null && destinyPiece.Player == piece.Player)) // piece of the same player in the destiny
+                        {
+                            myChessBoardUI.PrintMessage("Movimiento no sorportado por el momento");
+                            return false;
+                        }
+                        else
+                        {
+                            return true;
+                        }
                     }
-                    break;
                 case "T":
                     {
                         int startIndex;
@@ -138,7 +167,7 @@ namespace Chess_Challenge
                     }
                 case "C":
                     {
-                        //refactorizar estas lineas
+                        //refactorizar este caso
                         int startRowIndex = 0;
                         int endRowIndex = 0;
                         int colIndex = 0;
@@ -265,14 +294,9 @@ namespace Chess_Challenge
                         {
                             calculatedLocation = int.Parse(i.ToString() + j.ToString());
                             
-                            BoxLocation location = Locations.Where(lo => lo.Id == calculatedLocation).FirstOrDefault();
+                            posibleLocations = AddPosibleLocation(i, j, posibleLocations);
 
-                            if (location != null)
-                            {
-                                posibleLocations.Add(location);
-                            };
-
-                            if(flag == "upward")
+                            if (flag == "upward")
                             {
                                 j = j + 1;
                             }
@@ -345,18 +369,12 @@ namespace Chess_Challenge
                             {
                                 xAux = col + j;
 
-                                calculatedLocation = int.Parse(yAux.ToString() + xAux.ToString());
-
                                 //discard the  piece's location
-                                if (calculatedLocation != (piece.BoardLocation.Id))
+                                if (yAux != row && xAux != col)
                                 {
-                                    BoxLocation location = Locations.Where(lo => lo.Id == calculatedLocation).FirstOrDefault();
-
-                                    if (location != null)
-                                    {
-                                        posibleLocations.Add(location);
-                                    };
-                                };
+                                    posibleLocations = AddPosibleLocation(yAux, xAux, posibleLocations);
+                                }
+ 
                             };
                         }
 

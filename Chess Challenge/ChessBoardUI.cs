@@ -178,11 +178,11 @@ namespace Chess_Challenge
 
             Console.ForegroundColor = ConsoleColor.Blue;
             Console.SetCursorPosition(RefenceXPosition, 5);
-            Console.WriteLine("JUGADOR : 1");
+            Console.WriteLine("JUGADOR : 1 (REPRESENTA BLANCAS)");
 
             Console.ForegroundColor = ConsoleColor.Magenta;
             Console.SetCursorPosition(RefenceXPosition, 6);
-            Console.WriteLine("JUGADOR : 2");
+            Console.WriteLine("JUGADOR : 2 (REPRESENTA NEGRAS)");
 
             Console.ResetColor();
 
