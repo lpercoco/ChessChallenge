@@ -24,8 +24,8 @@ namespace Chess_Challenge
         {
             PrintLettersReference(2, 1);
             PrintNumbersReference(1, 0);
-            PrintRows(3, 2);
-            PrintColumns(2, 2);
+            PrintRowLines(3, 2);
+            PrintColumnLines(2, 2);
             PrintWhiteBoxs(3,3);
         }
 
@@ -52,10 +52,13 @@ namespace Chess_Challenge
             do
             {
                 Console.SetCursorPosition(RefenceXPosition, 20);
+                Console.Write("                                     ");
+
+                Console.SetCursorPosition(RefenceXPosition, 20);
                 Console.WriteLine(message);
 
                 Console.SetCursorPosition(RefenceXPosition, 22);
-                Console.Write("                                ");
+                Console.Write("                                     ");
 
                 Console.SetCursorPosition(RefenceXPosition, 22);
                 Console.Write("Ingrese casillero:");
@@ -90,8 +93,7 @@ namespace Chess_Challenge
             }
         }
 
-        //refactor
-        public void PrintColumns(int x, int y)
+        public void PrintColumnLines(int x, int y)
         {
             int lineHeight = BoxSizeX * 4;
             for (int lineNumber = 0; lineNumber < 9; lineNumber++)
@@ -104,8 +106,7 @@ namespace Chess_Challenge
             }
         }
 
-        //refactor
-        public void PrintRows(int x, int y)
+        public void PrintRowLines(int x, int y)
         {
             int hyphensCount = 16 * BoxSizeY;
             string hyphens = new string('-', hyphensCount);
@@ -117,7 +118,6 @@ namespace Chess_Challenge
             }
         }
 
-        //refactor this method
         public void PrintWhiteBoxs(int x, int y)
         {
             int printWidht = (BoxSizeX - 1);
@@ -140,7 +140,6 @@ namespace Chess_Challenge
             }
         }
 
-        //refactor
         public void PrintPiece(ChessPiece p)
         {
  
@@ -150,6 +149,7 @@ namespace Chess_Challenge
             Console.SetCursorPosition((col * BoxSizeX) - 2, (9 - row) * BoxSizeY);
             Console.Write(p.ShortName);
         }
+
         public void PrintPieces(List<ChessPiece> pieces)
         {
             pieces.ForEach( p => 
@@ -211,7 +211,7 @@ namespace Chess_Challenge
 
         public void UpdateChessBoard(List<ChessPiece> chessPieces)
         {
-            //refactorizar para solamente limpiar y actualizar las ubicaciones involucradas
+            //It could be optimizated by updating just the affected locations
             CleanChessBoardPieces();
 
             PrintPieces(chessPieces);

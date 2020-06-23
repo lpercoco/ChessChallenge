@@ -44,9 +44,6 @@ namespace Chess_Challenge
                         int rowIndex;
                         List<BoxLocation> posibleLocations = new List<BoxLocation>();
 
-                        //white -> Player == 1
-                        //black -> Player == 2
-
                         if (piece.Player == 1)
                         {
                             //player WHITE
@@ -87,29 +84,25 @@ namespace Chess_Challenge
                     }
                 case "C":
                     {
-                        //refactorizar este caso
-                        int startRowIndex = 0;
-                        int endRowIndex = 0;
-                        int colIndex = 0;
-                        bool isTopFlag = true;
+                        int startRowIndex;
+                        int endRowIndex;
+                        int colIndex;
+                        bool isTopFlag;
 
                         List<BoxLocation> posibleLocations = new List<BoxLocation>();
-
 
                         //calculation of the row and col indexs
                         if (row < rowDestinyLocation)
                         {
-                            //top
                             startRowIndex = 1;
                             endRowIndex = 2;
                             colIndex = 2;
+                            isTopFlag = true;
                         } else if (row > rowDestinyLocation)
                         {
-                            //bottom
                             startRowIndex = -2;
                             endRowIndex = -1;
                             colIndex = 1;
-
                             isTopFlag = false;
 
                         }
@@ -120,13 +113,16 @@ namespace Chess_Challenge
                             return false;
                         }
 
+                        //get possible locations
                         for (int rowIndex = startRowIndex; rowIndex <= endRowIndex; rowIndex++)
                         {
+                            //calculation of the right side
                             int r = row + rowIndex;
                             int c = col + colIndex;
 
                             posibleLocations = AddPosibleLocation(r, c, posibleLocations);
 
+                            //calculation of the left side
                             if(col - colIndex == 0)
                             {
                                 c = 1;
@@ -135,12 +131,12 @@ namespace Chess_Challenge
                             {
                                 c = col - colIndex;
                             }
-                            c = col - colIndex;
+
                             posibleLocations = AddPosibleLocation(r, c, posibleLocations);
 
+                            //update index considering the position of the selected location
                             if (isTopFlag) { colIndex = colIndex - 1; }
                             else { colIndex = colIndex + 1; };
-
                         }
 
                         if(posibleLocations.Any(l => l.Id == destinationBox.Id))
@@ -149,12 +145,14 @@ namespace Chess_Challenge
 
                             if ((pieceLocation != null && pieceLocation.Player == piece.Player))
                             {
+                                //There is a piece of the same player in the selected location
                                 myChessBoardUI.PrintMessage("Movimiento invalido");
                                 return false;
                             }
                         }
                         else
                         {
+                            //The selected destiny location is not included in the possible locations
                             myChessBoardUI.PrintMessage("Movimiento invalido");
                             return false;
                         }
@@ -328,7 +326,6 @@ namespace Chess_Challenge
                 {
                     ChessPiece pieceLocation = ChessPieces.Where(p => p.BoardLocation.Id == posibleLocations[i].Id).FirstOrDefault();
 
-                    //
                     if (posibleLocations[i].Id == destinationBox.Id &&
                             pieceLocation != null &&
                             pieceLocation.Player == piece.Player)
@@ -508,7 +505,7 @@ namespace Chess_Challenge
                     //destiny selection and movement validation
                     if (inputFlag != false)
                     {
-                        selectedBox = myChessBoardUI.SelectBox("Ingrese el destino de la pieza");
+                        selectedBox = myChessBoardUI.SelectBox("Ingrese el destino de la pieza: " + selectedPiece.BoardLocation.BoardReference);
 
                         selectedDestiny = Locations.Where(l => l.BoardReference.Equals(selectedBox)).FirstOrDefault();
 
