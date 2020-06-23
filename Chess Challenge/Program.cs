@@ -10,9 +10,9 @@ namespace Chess_Challenge
         {
             GameController Controller = new GameController();
 
-            Controller.InizializeUI();
-
             Controller.GenerateInitialRandomDistribution();
+
+            Controller.InizializeUI();
 
             Controller.PlayGame();
 
